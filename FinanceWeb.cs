@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Support.PageObjects;
+using System.Globalization;
 
 namespace TestApplication
 {
@@ -52,17 +53,13 @@ namespace TestApplication
             selectElement1.SelectByText("USD"); //Выбираем доллары для конвертации 
             var convertionBank = driver.FindElement(By.Id("converter_bank"));
             var selectElement2 = new SelectElement(convertionBank);
-            selectElement2.SelectByText("ПриватБанк"); //Выбираем по какому курсу считать
-            //decimal convertedSum = Convert.ToDecimal(driver.FindElement(By.XPath("//p[@id='UAH']//input[@id='currency_exchange']")).GetCssValue("Value"));
-            decimal convertedSum = 27250;
-
-            decimal privatER = Convert.ToDecimal(driver.FindElement(By.XPath("(//a [text()='ПриватБанк']/../../td[@class='buy_rate'])[1]")).Text); //Берем курс ПриватБанка из таблицы Курс валют банков в Украине
-            decimal calculatedSum = privatER * 1000;
-            Assert.AreEqual(convertedSum, calculatedSum);
-
-
-
+            selectElement2.SelectByText("ПриватБанк"); //Выбираем по какому курсу считать                       
+            string convertedSum = driver.FindElement(By.XPath("//p[@id='UAH']//input[@id='currency_exchange']")).GetAttribute("value");       
+            decimal privatUSD = Convert.ToDecimal(driver.FindElement(By.XPath("(//a [text()='ПриватБанк']/../../td[@class='buy_rate'])[1]")).Text); //Берем курс ПриватБанка из таблицы Курс валют банков в Украине            
+            decimal calculatedSum = privatUSD * 1000;
+            decimal convertSum = Decimal.Parse(convertedSum.Replace(" ", ""));
                         
+            Assert.AreEqual(convertSum, calculatedSum);                                    
             }
         [Test]
         public void UsefullLinksNames() 
